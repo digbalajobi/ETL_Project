@@ -1,6 +1,6 @@
 # ETL_Project
 
-Data:
+## Data:
 
 CSV File  from OpenSky Network:  https://opensky-network.org/datasets/covid-19/flightlist_20200101_20200131.csv.gz
 
@@ -9,7 +9,7 @@ Wikipedia Table: https://en.wikipedia.org/wiki/List_of_airports_by_IATA_airport_
 Kaggle CSV: https://www.kaggle.com/open-flights/airline-database
 
 
--Extract- 
+## Extract 
 
 CSV File  from OpenSky Network:  We were looking for flight data corresponding to the  Covid-19 crisis.  By searching flight APIs, we found a csv for every flight that landed in January 2020 from The OpenSky Network’s Covid-19 database. It contains data on individual flights, including the flight’s callsign, flight number, ICAO 24-bit code, registration number, typecode, flight origin, flight destination, the time the flight was first seen, last seen, and the date.  Due to the size of the csv file, it was more efficient to open it directly in jupyter notebook.  To do this we imported the gzip package and specified the compression attribute in the pandas read csv method.
 
@@ -19,7 +19,7 @@ Wikipedia Table: The above mentioned CSV file only had airport codes, so we deci
 Kaggle CSV: We then started looking for more general airport and airline data. From Kaggle, we found a CSV pulled from an open source database on OpenFlights.org. The data consists of information about individual airlines including the OpenFlight ID, the airline name, airline alias, 2 letter IATO code, 3 letter ICAO code, airline callsign, the affiliated country, and whether the airline is still active.  We used pandas to read the csv into a jupyter notebook. The data dates to 2012 and was last updated in 2017. 
 
 
--Transform- 
+## Transform 
 
 CSV File  from OpenSky Network:   After loading in 100 rows, we dropped rows that had any NaN vales which reduced the 100 rows tremendously. We then decided that 100 rows would not represent the entire dataset well enough.  So, we decided to pull all 1400 + rows and once the rows with ‘NaN’ were dropped, the dataframe was reduced to just over 1300 rows. 
 
@@ -34,7 +34,7 @@ We were unable to transform the column names to remove the spaces. We discovered
 
 Kaggle CSV:  The Kaggle data was fairly clean to begin with. The transformation primarily consisted of cleaning up null values and renaming columns to be more friendly to the Postgres database. Like the Wikipedia tables, the csv was ISO 8859 (Latin-1) encoded. It also had several kinds of null values. Since some of the original data was imported from a MySQL database (according to the Kaggle ‘about information’), some null values used “\N” to signify a null value. Due to the encoding, these characters proved difficult to isolate. Eventually we settled on reading in the file with pandas and specifying UTF-8 encoding. We then used the .replace() method to replace all “\N” with numpy NaN values. We then replaced all NaN values with spaces. We also dropped the first two rows of data since it was not relevant. Finally, we renamed the columns with lowercase letters and underscores instead of spaces.
 
--Load-
+## Load
 
 We used create_engine from sqlalchemy to load the tables into PG Admin after first setting up the tables with their data types and primary keys.  We then used the to_sql function to load the data into the SQL database.   We attempted to use foreign keys when creating tables, hoping that we could easily access fields such as  IATA or ICAO codes from different tables. However, we ran into a few unforeseen conflicts, for example, some of the code types did not line up. Additionally, the datasets may just not overlap. We may have been able to successfully build the tables with foreign keys with more time and more analysis.
 
